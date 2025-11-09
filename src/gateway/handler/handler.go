@@ -25,7 +25,7 @@ func (h *GatewayHandler) SetupRoutes() *gin.Engine {
 
 	api := router.Group("/api/v1") 
 	{
-		cars := api.Group("/car") 
+		cars := api.Group("/cars") 
 		{
 			cars.GET("", h.GetCars)
 		}
