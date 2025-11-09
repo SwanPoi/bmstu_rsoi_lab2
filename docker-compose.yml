@@ -13,8 +13,53 @@ services:
       - ./postgres/:/docker-entrypoint-initdb.d/
     ports:
       - "5432:5432"
+  
+  gateway:
+    image: swanpoi/gateway
+    container_name: gateway
+    restart: on-failure
+    build:
+      context: src/gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
 
-# TODO добавить сервисы
+  # car-service:
+  #   image: swanpoi/car-service
+  #   container_name: car-service
+  #   restart: on-failure
+  #   build:
+  #     context: src/car
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8070:8070"
+  #   depends_on:
+  #     - gateway
+
+  # rental-service:
+  #   image: swanpoi/rental-service
+  #   container_name: rental-service
+  #   restart: on-failure
+  #   build:
+  #     context: src/rental
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8060:8060"
+  #   depends_on:
+  #     - gateway
+
+  # payment-service:
+  #   image: swanpoi/payment-service
+  #   container_name: payment-service
+  #   restart: on-failure
+  #   build:
+  #     context: src/payment
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8050:8050"
+  #   depends_on:
+  #     - gateway
+
 
 volumes:
   db-data:
