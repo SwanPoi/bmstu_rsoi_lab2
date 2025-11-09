@@ -1,0 +1,32 @@
+package handler
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+
+	services "github.com/SwanPoi/bmstu_rsoi_lab2/src/rental/services"
+)
+
+type RentalHandler struct {
+	services *services.Services
+}
+
+func NewHandler(services *services.Services) *RentalHandler {
+	return &RentalHandler{services: services}
+}
+
+func (h *RentalHandler) SetupRoutes() *gin.Engine {
+	router := gin.New()
+
+	router.GET("/manage/health", func (c *gin.Context) {
+		c.Status(http.StatusOK)
+	})
+
+	api := router.Group("/api/v1") 
+	{
+		api.GET("/rental", h.GetUserRentals)
+	}
+
+	return router
+}

@@ -8,15 +8,15 @@ import (
 	services "github.com/SwanPoi/bmstu_rsoi_lab2/src/gateway/services"
 )
 
-type Handler struct {
+type GatewayHandler struct {
 	services *services.Services
 }
 
-func NewHandler(services *services.Services) *Handler {
-	return &Handler{services: services}
+func NewHandler(services *services.Services) *GatewayHandler {
+	return &GatewayHandler{services: services}
 }
 
-func (h *Handler) SetupRoutes() *gin.Engine {
+func (h *GatewayHandler) SetupRoutes() *gin.Engine {
 	router := gin.New()
 
 	router.GET("/manage/health", func (c *gin.Context) {
@@ -25,7 +25,7 @@ func (h *Handler) SetupRoutes() *gin.Engine {
 
 	api := router.Group("/api/v1") 
 	{
-		cars := api.Group("/cars") 
+		cars := api.Group("/car") 
 		{
 			cars.GET("", h.GetCars)
 		}

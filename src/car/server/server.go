@@ -1,4 +1,4 @@
-package common
+package server
 
 import (
 	"context"
@@ -6,11 +6,11 @@ import (
 	"time"
 )
 
-type Server struct {
+type CommonServer struct {
 	httpServer *http.Server
 }
 
-func (s *Server) Run(port string, handler http.Handler) error {
+func (s *CommonServer) Run(port string, handler http.Handler) error {
 	s.httpServer = &http.Server{
 		Addr:           ":" + port,
 		Handler:        handler,
@@ -22,6 +22,6 @@ func (s *Server) Run(port string, handler http.Handler) error {
 	return s.httpServer.ListenAndServe()
 }
 
-func (s *Server) Shutdown(ctx context.Context) error {
+func (s *CommonServer) Shutdown(ctx context.Context) error {
 	return s.httpServer.Shutdown(ctx)
 }

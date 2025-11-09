@@ -10,7 +10,7 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ./postgres/:/docker-entrypoint-initdb.d/
+      - ./postgres:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
   
@@ -24,41 +24,41 @@ services:
     ports:
       - "8080:8080"
 
-  # car-service:
-  #   image: swanpoi/car-service
-  #   container_name: car-service
-  #   restart: on-failure
-  #   build:
-  #     context: src/car
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8070:8070"
-  #   depends_on:
-  #     - gateway
+  car:
+    image: swanpoi/car-service
+    container_name: car
+    restart: on-failure
+    build:
+      context: src/car
+      dockerfile: Dockerfile
+    ports:
+      - "8070:8070"
+    depends_on:
+      - gateway
 
-  # rental-service:
-  #   image: swanpoi/rental-service
-  #   container_name: rental-service
-  #   restart: on-failure
-  #   build:
-  #     context: src/rental
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8060:8060"
-  #   depends_on:
-  #     - gateway
+  rental:
+    image: swanpoi/rental-service
+    container_name: rental
+    restart: on-failure
+    build:
+      context: src/rental
+      dockerfile: Dockerfile
+    ports:
+      - "8060:8060"
+    depends_on:
+      - gateway
 
-  # payment-service:
-  #   image: swanpoi/payment-service
-  #   container_name: payment-service
-  #   restart: on-failure
-  #   build:
-  #     context: src/payment
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8050:8050"
-  #   depends_on:
-  #     - gateway
+  payment:
+    image: swanpoi/payment-service
+    container_name: payment
+    restart: on-failure
+    build:
+      context: src/payment
+      dockerfile: Dockerfile
+    ports:
+      - "8050:8050"
+    depends_on:
+      - gateway
 
 
 volumes:

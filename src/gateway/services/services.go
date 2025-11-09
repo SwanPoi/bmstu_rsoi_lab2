@@ -4,16 +4,16 @@ import (
 
 )
 
-type Gateway interface {
+type IGatewayService interface {
 
 }
 
 type Services struct {
-	Gateway
+	IGatewayService
 }
 
 func NewServices() *Services {
 	return &Services{
-		Gateway: NewGatewayService(),
+		IGatewayService: NewGatewayService(),
 	}
 }
