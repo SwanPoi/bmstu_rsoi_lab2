@@ -1,9 +1,5 @@
 package models
 
-import (
-    
-)
-
 type Car struct {
     ID                uint      `json:"id" gorm:"primaryKey;autoIncrement"`
     CarUID            string    `json:"car_uid" gorm:"type:uuid;uniqueIndex;not null"`

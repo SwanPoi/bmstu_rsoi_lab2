@@ -25,7 +25,11 @@ func (h *RentalHandler) SetupRoutes() *gin.Engine {
 
 	api := router.Group("/api/v1") 
 	{
-		api.GET("/rental", h.GetUserRentals)
+		rentals := api.Group("/rental")
+		{
+			rentals.GET("", h.GetUserRentals)
+			rentals.GET("/:uid", h.GetUserRentalByUid)
+		}
 	}
 
 	return router

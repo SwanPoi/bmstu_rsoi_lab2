@@ -25,7 +25,13 @@ func (h *CarHandler) SetupRoutes() *gin.Engine {
 
 	api := router.Group("/api/v1") 
 	{
-		api.GET("/cars", h.GetCars)
+		
+		cars := api.Group("/cars")
+		{
+			cars.GET("", h.GetCars)
+			cars.GET("/:uid", h.GetCarById)
+			cars.POST("/query", h.GetCarsBatch)
+		}
 	}
 
 	return router

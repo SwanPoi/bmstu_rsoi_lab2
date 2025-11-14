@@ -24,7 +24,7 @@ services:
     ports:
       - "8080:8080"
 
-  car:
+  cars:
     image: swanpoi/car-service
     container_name: car
     restart: on-failure

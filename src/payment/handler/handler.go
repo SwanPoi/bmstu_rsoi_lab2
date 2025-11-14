@@ -25,7 +25,11 @@ func (h *PaymentHandler) SetupRoutes() *gin.Engine {
 
 	api := router.Group("/api/v1") 
 	{
-		api.GET("/payment", h.GetPayment)
+		payments := api.Group("/payment")
+		{
+			payments.GET("/:uid", h.GetPaymentByUid)
+			payments.POST("/query", h.GetPaymensBatch)
+		}
 	}
 
 	return router

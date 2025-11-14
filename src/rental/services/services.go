@@ -1,11 +1,13 @@
 package services
 
 import (
+	"github.com/SwanPoi/bmstu_rsoi_lab2/src/rental/models"
 	repo "github.com/SwanPoi/bmstu_rsoi_lab2/src/rental/repositories"
 )
 
 type IRentalService interface {
-
+	GetUserRentalByUid(uid string, username string) (*models.RentalResponse, error)
+	GetUserRentals(username string) ([]models.RentalResponse, error)
 }
 
 type Services struct {

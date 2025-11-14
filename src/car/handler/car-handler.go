@@ -3,11 +3,17 @@ package handler
 import (
 	"net/http"
 	"strconv"
+	"errors"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 
 	"github.com/SwanPoi/bmstu_rsoi_lab2/src/car/models"
-	"github.com/gin-gonic/gin"
 )
 
+/*
+* Получение всех машин по фильтрам
+*/
 func (h *CarHandler) GetCars(ctx *gin.Context) {
 	pageStr := ctx.DefaultQuery("page", "0")
 	sizeStr := ctx.DefaultQuery("size", "1")
@@ -42,4 +48,51 @@ func (h *CarHandler) GetCars(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, carsResponse)
+}
+
+/*
+* Получение машин по идентификаторам
+*/
+func (h *CarHandler) GetCarsBatch(ctx *gin.Context) {
+	var req models.CarsRequest
+
+	if err := ctx.BindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, models.ErrorResponse{Message: "Bad cars request model"})
+		return
+	}
+
+	cars, err := h.services.GetCarsByUids(req.UIDs)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, cars)
+}
+
+/*
+* Получение информации о машине по идентификатору
+*/
+func (h *CarHandler) GetCarById(ctx *gin.Context) {
+	carUid := ctx.Param("uid")
+
+	if _, err := uuid.Parse(carUid); err != nil {
+		ctx.JSON(http.StatusBadRequest, models.ErrorResponse{Message: "CarUid must be valid"})
+		return
+	}
+
+	car, err := h.services.GetCarByUid(carUid)
+
+	if err != nil {
+		if errors.Is(err, models.ErrorNotFound) {
+			message := "Car with car_uid = " + carUid + " is not found"
+			ctx.JSON(http.StatusNotFound, models.ErrorResponse{Message: message})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, err)
+		}
+		return
+	}
+
+	ctx.JSON(http.StatusOK, car)
 }

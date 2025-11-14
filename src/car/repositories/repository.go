@@ -7,6 +7,8 @@ import (
 
 type ICarRepo interface {
 	GetCars(int, int, bool) ([]models.Car, int, error)
+	GetCarByUid(string) (*models.Car, error)
+	GetCarsByUids([]string) ([]models.Car, error)
 }
 
 type Repository struct {

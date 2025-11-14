@@ -13,8 +13,8 @@ func main() {
 	connString := repo.GetConnectionString(&repo.DatabaseConfig{
 		Host: "postgres",
 		Port: 5432,
-		User: "program",
-		Password: "test",
+		User: "postgres",
+		Password: "postgres",
 		Database: "rentals",
 	})
 

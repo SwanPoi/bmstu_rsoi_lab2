@@ -7,6 +7,8 @@ import (
 
 type ICarService interface {
 	GetCars(page int, size int, showAll bool) (*models.PaginationResponse, error)
+	GetCarByUid(uuid string) (*models.ShortCar, error)
+	GetCarsByUids([]string) ([]models.ShortCar, error)
 }
 
 type Services struct {
