@@ -29,6 +29,8 @@ func (h *RentalHandler) SetupRoutes() *gin.Engine {
 		{
 			rentals.GET("", h.GetUserRentals)
 			rentals.GET("/:uid", h.GetUserRentalByUid)
+			rentals.POST("", h.CreateRental)
+			rentals.PATCH("/:uid", h.UpdateRental)
 		}
 	}
 

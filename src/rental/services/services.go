@@ -8,6 +8,8 @@ import (
 type IRentalService interface {
 	GetUserRentalByUid(uid string, username string) (*models.RentalResponse, error)
 	GetUserRentals(username string) ([]models.RentalResponse, error)
+	CreateRental(models.RentCreation) (*models.RentalResponse, error)
+	UpdateRental(rental models.RentalUpsert, uid string, username string) (error)
 }
 
 type Services struct {

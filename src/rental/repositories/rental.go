@@ -38,3 +38,23 @@ func (r *RentalPostgres) GetUserRentals(username string) ([]models.RentalRespons
 
 	return rentals, nil
 }
+
+func (r *RentalPostgres) CreateRental(rental models.Rental) (error) {
+	return r.DB.Create(rental).Error
+}
+
+func (r *RentalPostgres) UpdateRental(rental models.RentalUpsert, uid string, username string) (error) {
+	result := r.DB.Model(&models.Rental{}).
+					Where("rental_uid = ? AND username = ?", uid, username).
+					Update("status", rental.Status)
+	
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return models.ErrorNotFound
+	}
+
+	return nil
+}
