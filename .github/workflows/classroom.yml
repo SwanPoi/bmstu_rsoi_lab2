@@ -43,6 +43,20 @@ jobs:
           export WAIT_PORTS="8080,8060,8050,8070"
           ./scripts/wait-script.sh 
 
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          echo "=== Postgres Logs ==="
+          docker compose -f docker-compose.test.yml logs postgres
+          echo "=== Gateway Logs ==="
+          docker compose -f docker-compose.test.yml logs gateway
+          echo "=== Library Logs ==="
+          docker compose -f docker-compose.test.yml logs cars
+          echo "=== Rating Logs ==="
+          docker compose -f docker-compose.test.yml logs rental
+          echo "=== Reservation Logs ==="
+          docker compose -f docker-compose.test.yml logs payment
+
       - name: Run API Tests
         uses: matt-ball/newman-action@master
         with:
