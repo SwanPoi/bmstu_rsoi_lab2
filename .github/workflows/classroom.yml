@@ -34,7 +34,7 @@ jobs:
 
       - name: Build images
         timeout-minutes: 10
-        run: docker compose build
+        run: docker compose -f docker-compose.test.yml build
 
       - name: Run containers
         timeout-minutes: 5
@@ -74,4 +74,4 @@ jobs:
       - name: Stop containers
         if: always()
         continue-on-error: true
-        run: docker compose down -v
+        run: docker compose -f docker-compose.test.yml down -v
