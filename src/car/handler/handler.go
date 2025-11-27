@@ -31,6 +31,7 @@ func (h *CarHandler) SetupRoutes() *gin.Engine {
 			cars.GET("", h.GetCars)
 			cars.GET("/:uid", h.GetCarById)
 			cars.POST("/query", h.GetCarsBatch)
+			cars.PATCH("/:uid", h.UpdateCar)
 		}
 	}
 

@@ -7,15 +7,15 @@ import (
 )
 
 type CarService struct {
-	repo *repo.Repository
+	repo repo.ICarRepo
 }
 
-func NewCarService(repo *repo.Repository) *CarService {
+func NewCarService(repo repo.ICarRepo) *CarService {
 	return &CarService{repo: repo}
 }
 
 func (s *CarService) GetCars(page int, size int, showAll bool) (*models.PaginationResponse, error) {
-	offset := page * size
+	offset := (page - 1) * size
 
 	cars, total, err := s.repo.GetCars(offset, size, showAll)
 
@@ -61,4 +61,15 @@ func (s *CarService) GetCarsByUids(uids []string) ([]models.ShortCar, error) {
 	}
 
 	return shortCars, nil
+}
+
+func (s *CarService) UpdateCar(car models.CarUpsert, uid string) (*models.ShortCar, error) {
+	updatedCar, err := s.repo.UpdateCar(car, uid); 
+	if err != nil {
+		return nil, err
+	}
+
+	shortCar := converters.CarToShortCar(*updatedCar)
+
+	return &shortCar, nil
 }

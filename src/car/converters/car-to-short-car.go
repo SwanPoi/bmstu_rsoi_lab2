@@ -8,5 +8,6 @@ func CarToShortCar(car models.Car) models.ShortCar {
 		Brand: car.Brand,
 		Model: car.Model,
 		RegistrationNumber: car.RegistrationNumber,
+		Availability: car.Availability,
 	}
 }

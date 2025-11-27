@@ -59,3 +59,29 @@ func (r *CarPostgres) GetCarsByUids(uids []string) ([]models.Car, error) {
 
 	return cars, nil
 }
+
+func (r *CarPostgres) UpdateCar(car models.CarUpsert, uid string) (*models.Car, error) {
+	result := r.DB.Model(&models.Car{}).
+				Where("car_uid = ?", uid).
+				Update("availability", car.Availability)
+	
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return nil, models.ErrorNotFound
+	}
+
+	var updatedCar models.Car
+
+	if err := r.DB.Where("car_uid = ?", uid).First(&updatedCar).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, models.ErrorNotFound
+		}
+
+		return nil, err
+	}
+
+	return &updatedCar, nil
+}

@@ -5,14 +5,15 @@ import (
 
 	"github.com/SwanPoi/bmstu_rsoi_lab2/src/rental/models"
 	repo "github.com/SwanPoi/bmstu_rsoi_lab2/src/rental/repositories"
+	"github.com/SwanPoi/bmstu_rsoi_lab2/src/rental/utils"
 	"github.com/google/uuid"
 )
 
 type RentalService struct {
-	repo *repo.Repository
+	repo repo.IRentalRepo
 }
 
-func NewRentalService(repo *repo.Repository) *RentalService {
+func NewRentalService(repo repo.IRentalRepo) *RentalService {
 	return &RentalService{repo: repo}
 }
 
@@ -27,14 +28,7 @@ func (s *RentalService) GetUserRentalByUid(uid string, username string) (*models
 		return nil, models.Forbidden
 	}
 
-	rentalResponse := models.RentalResponse{
-		RentalUID: rental.RentalUID,
-		PaymentUID: rental.PaymentUID,
-		CarUID: rental.CarUID,
-		DateFrom: rental.DateFrom,
-		DateTo: rental.DateTo,
-		Status: rental.Status,
-	}
+	rentalResponse := utils.ConvertToRentalResponse(*rental)
 
 	return &rentalResponse, nil
 }
@@ -44,12 +38,12 @@ func (s *RentalService) GetUserRentals(username string) ([]models.RentalResponse
 }
 
 func (s *RentalService) CreateRental(rentalReq models.RentCreation) (*models.RentalResponse, error) {
-	dateFrom, err := time.Parse(time.RFC3339, rentalReq.DateFrom)
+	dateFrom, err := time.Parse("2006-01-02", rentalReq.DateFrom)
     if err != nil {
         return nil, err
     }
 
-    dateTo, err := time.Parse(time.RFC3339, rentalReq.DateTo)
+    dateTo, err := time.Parse("2006-01-02", rentalReq.DateTo)
     if err != nil {
         return nil, err
     }
@@ -65,22 +59,14 @@ func (s *RentalService) CreateRental(rentalReq models.RentCreation) (*models.Ren
 	}
 
 	if err := s.repo.CreateRental(rental); err == nil {
-		response := models.RentalResponse{
-			RentalUID: rental.RentalUID,
-			PaymentUID: rental.PaymentUID,
-			CarUID: rental.CarUID,
-			DateFrom: rental.DateFrom,
-			DateTo: rental.DateTo,
-			Status: rental.Status,
-		}
-
+		response := utils.ConvertToRentalResponse(rental)
 		return &response, nil
 	} else {
 		return nil, err
 	}
 }
 
-func (s *RentalService) UpdateRental(rental models.RentalUpsert, uid string, username string) (error) {
+func (s *RentalService) UpdateRental(rental models.RentalUpsert, uid string, username string) (*models.RentalResponse, error) {
 	validStatuses := map[string]bool{
         "IN_PROGRESS": true,
         "FINISHED":    true,
@@ -88,7 +74,7 @@ func (s *RentalService) UpdateRental(rental models.RentalUpsert, uid string, use
     }
 
 	if !validStatuses[rental.Status] {
-        return models.InvalidStatus
+        return nil, models.InvalidStatus
     }
 
 	return s.repo.UpdateRental(rental, uid, username)

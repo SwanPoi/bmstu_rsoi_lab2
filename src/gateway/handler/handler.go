@@ -5,15 +5,20 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/SwanPoi/bmstu_rsoi_lab2/src/gateway/models"
 	services "github.com/SwanPoi/bmstu_rsoi_lab2/src/gateway/services"
 )
 
 type GatewayHandler struct {
 	services *services.Services
+	config   *models.HandlerConfig
 }
 
-func NewHandler(services *services.Services) *GatewayHandler {
-	return &GatewayHandler{services: services}
+func NewHandler(services *services.Services, config *models.HandlerConfig) *GatewayHandler {
+	return &GatewayHandler{
+		services: services,
+		config: config,
+	}
 }
 
 func (h *GatewayHandler) SetupRoutes() *gin.Engine {

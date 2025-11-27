@@ -9,7 +9,7 @@ type IRentalRepo interface {
 	GetRentalByUid(uid string) (*models.Rental, error)
 	GetUserRentals(username string) ([]models.RentalResponse, error)
 	CreateRental(models.Rental) (error)
-	UpdateRental(rental models.RentalUpsert, uid string, username string) (error)
+	UpdateRental(rental models.RentalUpsert, uid string, username string) (*models.RentalResponse, error)
 }
 
 type Repository struct {

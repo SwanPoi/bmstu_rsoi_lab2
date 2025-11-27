@@ -26,6 +26,7 @@ func main() {
 		return
 	}
 
+	log.Print("Successfully connect to database")
 	db.AutoMigrate(&models.Car{})
 
 	repos := repo.NewRepository(db)

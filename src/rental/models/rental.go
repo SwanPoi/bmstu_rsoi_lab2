@@ -12,3 +12,7 @@ type Rental struct {
     DateTo    time.Time `json:"date_to" gorm:"type:timestamp with time zone;not null"`
     Status    string    `json:"status" gorm:"type:varchar(20);not null;check:type IN ('IN_PROGRESS', 'FINISHED', 'CANCELED')"`
 }
+
+func (Rental) TableName() string {
+    return "rental"
+}

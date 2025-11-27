@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 func (h *RentalHandler) GetUserRentals(ctx *gin.Context) {
 	username := ctx.GetHeader("X-User-Name")
 	if username == "" {
+		log.Println("Need X-User-Name for rentals")
 		ctx.JSON(http.StatusBadRequest, models.ErrorResponse{Message: "X-User-Name header is required"})
 		return
 	}
@@ -20,6 +22,7 @@ func (h *RentalHandler) GetUserRentals(ctx *gin.Context) {
 	rentals, err := h.services.GetUserRentals(username)
 
 	if err != nil {
+		log.Println("Can't get rental from table, ", err.Error())
 		ctx.JSON(http.StatusInternalServerError, models.ErrorResponse{Message: err.Error()})
 		return
 	}
@@ -33,6 +36,7 @@ func (h *RentalHandler) GetUserRentals(ctx *gin.Context) {
 func (h *RentalHandler) GetUserRentalByUid(ctx *gin.Context) {
 	username := ctx.GetHeader("X-User-Name")
 	if username == "" {
+		log.Println("Need X-User-Name for rental")
 		ctx.JSON(http.StatusBadRequest, models.ErrorResponse{Message: "X-User-Name header is required"})
 		return
 	}
@@ -40,6 +44,7 @@ func (h *RentalHandler) GetUserRentalByUid(ctx *gin.Context) {
 	rentalUid := ctx.Param("uid")
 
 	if _, err := uuid.Parse(rentalUid); err != nil {
+		log.Println("Need uid for rental")
 		ctx.JSON(http.StatusBadRequest, models.ErrorResponse{Message: "RentalUid must be valid"})
 		return
 	}
@@ -47,6 +52,7 @@ func (h *RentalHandler) GetUserRentalByUid(ctx *gin.Context) {
 	rental, err := h.services.GetUserRentalByUid(rentalUid, username)
 
 	if err != nil {
+		log.Println("Can't get rental by id = " + rentalUid, ", ", err.Error())
 		if errors.Is(err, models.ErrorNotFound) {
 			message := "Rental with rental_uid = " + rentalUid + " is not found"
 			ctx.JSON(http.StatusNotFound, models.ErrorResponse{Message: message})
@@ -66,6 +72,7 @@ func (h *RentalHandler) CreateRental(ctx *gin.Context) {
 	var req models.RentCreation
 
 	if err := ctx.BindJSON(&req); err != nil {
+		log.Println("Bad body for rental creation, ", err.Error())
 		ctx.JSON(http.StatusBadRequest, models.ErrorResponse{Message: "Bad Rental Creation body"})
 		return
 	}
@@ -75,11 +82,11 @@ func (h *RentalHandler) CreateRental(ctx *gin.Context) {
 		Errors: make(map[string]string),
 	}
 
-	if _, err := time.Parse(time.RFC3339, req.DateFrom); err != nil {
+	if _, err := time.Parse("2006-01-02", req.DateFrom); err != nil {
         validationErr.Errors["date-from"] = "Error with parsing time from date-from"
     }
 
-    if _, err := time.Parse(time.RFC3339, req.DateTo); err != nil {
+    if _, err := time.Parse("2006-01-02", req.DateTo); err != nil {
        	validationErr.Errors["date-to"] = "Error with parsing time from date-from"
     }
 
@@ -99,6 +106,7 @@ func (h *RentalHandler) CreateRental(ctx *gin.Context) {
 	rental, err := h.services.CreateRental(req)
 
 	if err != nil {
+		log.Println("Can't create rental, ", err.Error())
 		ctx.JSON(http.StatusInternalServerError, models.ErrorResponse{Message: err.Error()})
 		return
 	}
@@ -109,6 +117,7 @@ func (h *RentalHandler) CreateRental(ctx *gin.Context) {
 func (h *RentalHandler) UpdateRental(ctx *gin.Context) {
 	username := ctx.GetHeader("X-User-Name")
 	if username == "" {
+		log.Println("Need X-User-Name for rental")
 		ctx.JSON(http.StatusBadRequest, models.ErrorResponse{Message: "X-User-Name header is required"})
 		return
 	}
@@ -116,6 +125,7 @@ func (h *RentalHandler) UpdateRental(ctx *gin.Context) {
 	rentalUid := ctx.Param("uid")
 
 	if _, err := uuid.Parse(rentalUid); err != nil {
+		log.Println("Need uid for rental")
 		ctx.JSON(http.StatusBadRequest, models.ErrorResponse{Message: "RentalUid must be valid"})
 		return
 	}
@@ -123,11 +133,14 @@ func (h *RentalHandler) UpdateRental(ctx *gin.Context) {
 	var req models.RentalUpsert
 
 	if err := ctx.BindJSON(&req); err != nil {
+		log.Println("Bad body for rental updating, ", err.Error())
 		ctx.JSON(http.StatusBadRequest, models.ErrorResponse{Message: "Bad Rental Upsert body"})
 		return
 	}
 
-	if err := h.services.UpdateRental(req, rentalUid, username); err != nil {
+	rental, err := h.services.UpdateRental(req, rentalUid, username); 
+	if err != nil {
+		log.Println("Can't update rental with uid = " + rentalUid +", ", err.Error())
 		if err == models.InvalidStatus {
 			ctx.JSON(http.StatusBadRequest, models.ErrorResponse{Message: err.Error()})
 		} else if err == models.ErrorNotFound {
@@ -140,5 +153,5 @@ func (h *RentalHandler) UpdateRental(ctx *gin.Context) {
 		return
 	}
 
-	ctx.Status(http.StatusNoContent)
+	ctx.JSON(http.StatusOK, rental)
 }

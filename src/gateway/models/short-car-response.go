@@ -1,6 +1,6 @@
 package models
 
-type ShortCar struct {
+type ShortCarResponse struct {
 	CarUID              string `json:"carUid"`
     Brand               string `json:"brand"`
     Model               string `json:"model"`

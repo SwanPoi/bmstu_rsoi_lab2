@@ -4,6 +4,7 @@ import (
 	"log"
 
 	handler "github.com/SwanPoi/bmstu_rsoi_lab2/src/payment/handler"
+	"github.com/SwanPoi/bmstu_rsoi_lab2/src/payment/models"
 	repo "github.com/SwanPoi/bmstu_rsoi_lab2/src/payment/repositories"
 	server "github.com/SwanPoi/bmstu_rsoi_lab2/src/payment/server"
 	services "github.com/SwanPoi/bmstu_rsoi_lab2/src/payment/services"
@@ -24,6 +25,9 @@ func main() {
 		log.Fatal("Fail during db connection", err)
 		return
 	}
+
+	log.Print("Successfully connect to database")
+	db.AutoMigrate(&models.Payment{})
 
 	repos := repo.NewRepository(db)
 	service := services.NewServices(repos)
