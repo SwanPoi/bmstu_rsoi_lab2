@@ -24,7 +24,8 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          ls -la ./src/car/go.mod
+          ls -la ./src/
+          ls -la ./src/car
           cd src/car
           go test -v ./...
           cd ../rental
