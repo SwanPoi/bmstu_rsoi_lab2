@@ -24,13 +24,14 @@ jobs:
 
       - name: Run Unit Tests
         run: |
+          ls -la ./
           cd src/car
           go test -v ./...
           cd ../rental
           go test -v ./...
           cd ../payment
           go test -v ./...
-          cd ..
+          cd ../..
 
       - name: Build images
         timeout-minutes: 10
